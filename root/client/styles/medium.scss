@@ -1,0 +1,89 @@
+/*Medium Screen media query*/
+@media screen and (min-width:551px) and (max-width: 1000px){
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 40%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 25px;
+        /* margin: 100px 50px 50px 50px; */
+        margin: 100px auto;
+        grid-auto-columns: 100%;
+    }
+
+
+    body{
+        background-color: grey;
+    }
+
+    h1{
+        font-size: 20px;
+    }
+
+
+    .locationArea{
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 12px;
+    }
+
+
+    .dateArea{
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 12px;
+    }
+
+
+    #start{
+        width: 100%;
+    }
+
+    .dateLabel{
+        margin: 0;
+    }
+
+
+    #end{
+        width: 100%;
+    }
+
+
+    .buttonDiv{
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    
+    #subButton{
+        width: 50%;
+    }
+
+
+    #itinerary{
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        background-color: rgba(120, 120, 120, 0.5);
+        border-radius: 25px;
+        margin: 100px 50px 50px 50px;
+    }
+    
+    
+    .container input{
+        width: 100%;
+    }
+    
+    
+    .head{
+        margin: 50px;
+    }
+    
+    
+    label{
+        font-weight: bold;
+        margin-right: 20px;
+    }
+
+}

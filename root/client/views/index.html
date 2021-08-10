@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FEND Capstone - Travel App</title>
+</head>
+<body>
+    <div class ="container" id="container">
+        <form onsubmit="return Client.generatePage(event)">
+            <h1 class="head">FEND Capstone - Travel App</h1>
+            <div class="locationArea"> <!--cityArea-->
+                <label for "city">City Here:</label>
+                <input type="text" id="city_form" placeholder="Enter city code here">
+            </div>
+            <div class="locationArea"> <!--countryArea-->
+                <label for "country">Country Here:</label>
+                <input type="text" id="country_form" placeholder="Enter country code here">
+            </div>
+            <div class="dateArea">
+                <label for="start" class="dateLabel">Start date:</label>
+                <input type="date" id="start" name="trip-start" value="" min="2021-08-03" max="2022-08-03">
+                <label for="end" class="dateLabel">End date:</label>
+                <input type="date" id="end" name="trip-end" value="" min="2021-08-03" max="2022-08-03">
+            </div>
+            <div class="buttonDiv">
+                <!-- <button id="generate" type="button">Submit</button> -->
+                <input type="submit" id="subButton" name="" value="submit" onclick="return Client.generatePage(event)" onsubmit="return Client.generatePage(event)">
+            </div>
+        </form>
+    </div>
+    <div id="itinerary">
+        <h2>Travel Itinerary</h2>
+        <div class ="travelText" id="duration">...</div>            
+        <h3>Location Details:</h3>
+        <div class ="travelText" id="lat">...</div>            
+        <div class ="travelText" id="lon">...</div>           
+        <div class ="travelText" id="city">...</div>           
+        <div class ="travelText" id="country">...</div>           
+        <h3>Weather Forecast:</h3>
+        <div class ="travelText" id="current">...</div>           
+        <div class ="travelText" id="high">...</div>            
+        <div class ="travelText" id="low">...</div>
+        <img id="icon" src="">            
+        <div class ="travelText" id="description">...</div>            
+        <div class ="travelText" class="buttonDiv">
+            <button id="reset" type="button">Create New Trip</button>
+        </div>
+    </div>
+</body>
+</html>
