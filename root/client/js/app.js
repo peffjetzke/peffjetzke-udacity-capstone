@@ -43,17 +43,14 @@ function generatePage(e){
         formData["forecastDays"] = forecastDays;
         formData["duration:"] = duration;
         console.log("Updated Form Data: ", formData);
-        // let formData = {
-        //     city: city,
-        //     country: country,
-        //     forecastDays: forecastDays,
-        //     duration: duration};
 
         /*POST to server side with data from the form*/
         //returnData = postData('http://localhost:8081/add', formData)
-        postData('http://localhost:8081/add', formData);
-        let returnData = getData();
-        console.log("Return Data: ", returnData);
+        postData('http://localhost:8081/add', formData)
+        .then(()=>{
+            const returnData = getData();
+            console.log("Get Data: ", returnData)
+        });
     }else{
         //no else, handled in the function
     }
@@ -87,7 +84,7 @@ const getData = async () =>{
     try {
     //const allData = await request.json();
     const allData = await request;
-    console.log("Get Data: ", allData.request);
+    return allData;
   }
     catch(error) {
       console.log("error", error);

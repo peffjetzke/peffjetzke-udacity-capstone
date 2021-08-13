@@ -1,5 +1,5 @@
 /*Variables*/
-let travelData = [];
+let travelData = {};
 let formData= {};
 let forecastData = {};
 
@@ -86,8 +86,11 @@ function callAPIs() {
   console.log("Country: ", country);
   console.log("GeoURL: ", fullGeoURL); 
 
-  travelData.push(formData);
-  
+  travelData["city"] = city;
+  travelData["country"] = country;
+  travelData["fdays"] = formData.forecastDays;
+  travelData["duration"] = formData.duration;
+
   getCoordinates(fullGeoURL)
   .then((coordData)=>{
     const lon = coordData.geonames[0].lng;
@@ -109,8 +112,12 @@ function callAPIs() {
         desc: weatherData.data[0].weather.description,
         icon: weatherData.data[0].weather.icon
       }
-     //console.log("Forecast Data: ", forecastData);
-      travelData.push(forecastData);
+      travelData["temp"] = weatherData.data[0].temp
+      travelData["high"] = weatherData.data[0].high_temp
+      travelData["low"] = weatherData.data[0].low_temp
+      travelData["desc"] = weatherData.data[0].weather.description,
+      travelData["icon"] = weatherData.data[0].weather.icon
+      //travelData.push(forecastData);
       //console.log("Updated Travel Data: ", travelData);
       return travelData;
 
@@ -133,11 +140,10 @@ function callAPIs() {
     }
       travelData.push(forecastData);
       return travelData;
-      //return forecastData;
     }
   })
   .then((travelData)=>{
-    let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q="+travelData[0].city; //was formData
+    let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q="+travelData.city;
     //console.log("Pix URL: ", pixFullURL);
     const imageSrc = getImage(pixFullURL);
     return imageSrc;
@@ -145,32 +151,34 @@ function callAPIs() {
   .then((imageSrc)=>{
     if(imageSrc.hits.length == 0){
       let imgsrc = "url('./media/default.jpg')"; 
-      //document.body.style.backgroundImage = "url('./media/default.jpg')";
-      travelData.push(imgsrc); //was formData
+      travelData["imgsrc"] = imgsrc;
       //console.log("Final Travel Update: ", travelData);
-      return travelData; //was formData
+      return travelData;
     }else{
       let i = Math.floor(Math.random()*imageSrc.hits.length);
       let imgURL = imageSrc.hits[i].largeImageURL;     
       // console.log(imgURL);
       let imgsrc = "url("+imgURL+")";
-      //document.body.style.backgroundImage = "url("+imgURL+")";
-      //imgsrc.push(travelData); //was formData
-      travelData.push(imgsrc);
+      travelData["imgsrc"] = imgsrc;
       //console.log("Final Travel Update: ", travelData);
       return travelData;
     }
+  }).then((travelData)=>{
+    console.log("Then Final Data: ", travelData); 
+    return travelData; //This is not returned to the GET some reason?
   })
 }
 
 /*Get*/
-function getData(req, res) {
-    let returnData = callAPIs();
-    res.send(returnData);
-  }
-
 app.get('/all', getData) 
 
+function getData(req, res) {
+    console.log("Request for data received...");
+    let returnData = {};
+    returnData = callAPIs(); 
+    console.log("Trying to send: ", returnData);
+    res.send(returnData);
+  }
 
 app.post('/add', getFormData);
 
@@ -181,10 +189,10 @@ function getFormData(req, res){
     formData["country"] = reqData.country;
     formData["forecastDays"] = reqData.forecastDays;
     formData["duration"] = reqData.duration;
-    
+
     console.log(formData);
-    let returnData = "Thanks! Request received!"; 
-    res.send(returnData); //send back data
+    let returnMessage = "Thanks! Request received!"; 
+    res.send(returnMessage); //send back data
 }
 
 /*Post*/
