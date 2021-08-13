@@ -1,9 +1,10 @@
 /*Variables*/
-let travelData = {};
+let travelData = [];
 let formData= {};
 let forecastData = {};
 
 const dotenv = require('dotenv');
+dotenv.config();
 const fetch = require('node-fetch');
 
 /*Setup Server*/
@@ -28,10 +29,6 @@ app.use(express.static('root'));
 const port = 8081;
 const server = app.listen(port, listening);
 
-function listening(){
-  console.log("Server running");
-  console.log(`Running on localhost: ${port}`);
-}
 
 /*API Variables*/
 const geoURL = "http://api.geonames.org/searchJSON?";
@@ -49,13 +46,9 @@ let pixabaySearch = ""; //&q=searchterm
 let pixabayImage = "&image_type=photo"; //&image_type=imagetype
 const pixKey = process.env.PIX_KEY;
 
-let city = formData.city;
-let country = formData.country;
-let fullGeoURL = geoURL+"q="+city+"&country="+country+geoHits+"&username="+geoKey;
-
 /*API Calls*/
-const getCoordinates = async (fullGeoURL)=>{ //can this just be used generically?
-  const res = await fetch(fullGeoURL) 
+const getCoordinates = async (url)=>{ //updated to use URL first, which will be passed an actual url
+  const res = await fetch(url) 
   try{
       const data = await res.json();
       return data;
@@ -64,8 +57,8 @@ const getCoordinates = async (fullGeoURL)=>{ //can this just be used generically
   }
 }
 
-const getWeather = async (fullWeatherURL)=>{ //can this just be used generically? 
-  const res = await fetch(fullWeatherURL) //baseURL+zip+apiKey+units
+const getWeather = async (fullWeatherURL)=>{ 
+  const res = await fetch(fullWeatherURL) 
   try{
       const data = await res.json();
       return data;
@@ -74,8 +67,8 @@ const getWeather = async (fullWeatherURL)=>{ //can this just be used generically
   }
 }
 
-const getImage = async (pixFullURL)=>{ //can this just be used generically? 
-  const res = await fetch(pixFullURL) //baseURL+zip+apiKey+units
+const getImage = async (pixFullURL)=>{ 
+  const res = await fetch(pixFullURL) 
   try{
       const data = await res.json();
       return data;
@@ -85,18 +78,30 @@ const getImage = async (pixFullURL)=>{ //can this just be used generically?
 }
 
 function callAPIs() {
-  getCoordinates()
-  .then(function(coordData){
-      //console.log(data); //returning data here
-      const lon = coordData.geonames[0].lng;
-      const lat = coordData.geonames[0].lat;
-      let fullWeatherURL = weatherURL+units+"&lat="+lat+"&lon="+lon+"&key="+weatherKey;
-      const weatherData = getWeather(fullWeatherURL);
-      return weatherData;
+  let city = formData.city;
+  let country = formData.country;
+  let fullGeoURL = geoURL+"q="+city+"&country="+country+geoHits+"&username="+geoKey;
+
+  console.log("City: ", city);
+  console.log("Country: ", country);
+  console.log("GeoURL: ", fullGeoURL); 
+
+  travelData.push(formData);
+  
+  getCoordinates(fullGeoURL)
+  .then((coordData)=>{
+    const lon = coordData.geonames[0].lng;
+    const lat = coordData.geonames[0].lat;
+    //console.log("Coords are : ", lat + " " + lon);
+    let fullWeatherURL = weatherURL+units+"&lat="+lat+"&lon="+lon+"&key="+weatherKey;
+    //console.log("Weater URL is: ", fullWeatherURL)
+    const weatherData = getWeather(fullWeatherURL);
+    return weatherData;
   })
   .then((weatherData)=>{
-    let forecastDays = formData.forecastDays;
-    if(forecastDays<=1){
+    //console.log("Weater: ", weatherData);
+    let days = formData.forecastDays;
+    if(days<=1){
       let forecastData = {
         temp: weatherData.data[0].temp,
         high: weatherData.data[0].high_temp,
@@ -104,33 +109,36 @@ function callAPIs() {
         desc: weatherData.data[0].weather.description,
         icon: weatherData.data[0].weather.icon
       }
-      forecastData.push(formData)
-      return formData;
+     //console.log("Forecast Data: ", forecastData);
+      travelData.push(forecastData);
+      //console.log("Updated Travel Data: ", travelData);
+      return travelData;
 
-    }else if (forecastDays>=16) {
+    }else if (days>=16) {
       let forecastData = {
         high: weatherData.data[15].high_temp,
         low: weatherData.data[15].low_temp,
         desc: weatherData.data[15].weather.description,
         icon: weatherData.data[0].weather.icon
       }
-      forecastData.push(formData)
-      return formData;
+      travelData.push(forecastData);
+      return travelData;
 
   }else{
     let forecastData = {
-        high: weatherData.data[forecastDays].high_temp,
-        low: weatherData.data[forecastDays].low_temp,
-        desc: weatherData.data[forecastDays].weather.description,
-        icon: weatherData.data[0].weather.icon,
+        high: weatherData.data[days].high_temp,
+        low: weatherData.data[days].low_temp,
+        desc: weatherData.data[days].weather.description,
+        icon: weatherData.data[days].weather.icon,
     }
-      forecastData.push(formData)
-      return formData;
+      travelData.push(forecastData);
+      return travelData;
       //return forecastData;
     }
   })
-  .then((formData)=>{
-    let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q="+formData.city;
+  .then((travelData)=>{
+    let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q="+travelData[0].city; //was formData
+    //console.log("Pix URL: ", pixFullURL);
     const imageSrc = getImage(pixFullURL);
     return imageSrc;
   })
@@ -138,30 +146,33 @@ function callAPIs() {
     if(imageSrc.hits.length == 0){
       let imgsrc = "url('./media/default.jpg')"; 
       //document.body.style.backgroundImage = "url('./media/default.jpg')";
-      imgsrc.push(formData);
-      return formData; 
+      travelData.push(imgsrc); //was formData
+      //console.log("Final Travel Update: ", travelData);
+      return travelData; //was formData
     }else{
       let i = Math.floor(Math.random()*imageSrc.hits.length);
       let imgURL = imageSrc.hits[i].largeImageURL;     
       // console.log(imgURL);
       let imgsrc = "url("+imgURL+")";
       //document.body.style.backgroundImage = "url("+imgURL+")";
-      imgsrc.push(formData);
-      formData.push(travelData);
-      console.log(travelData);
+      //imgsrc.push(travelData); //was formData
+      travelData.push(imgsrc);
+      //console.log("Final Travel Update: ", travelData);
       return travelData;
     }
   })
 }
 
-console.log(travelData);
-
 /*Get*/
 function getData(req, res) {
-    res.send(travelData);
+    let returnData = callAPIs();
+    res.send(returnData);
   }
 
 app.get('/all', getData) 
+
+
+app.post('/add', getFormData);
 
 function getFormData(req, res){
     let reqData = req.body;
@@ -170,7 +181,10 @@ function getFormData(req, res){
     formData["country"] = reqData.country;
     formData["forecastDays"] = reqData.forecastDays;
     formData["duration"] = reqData.duration;
-    res.send(callAPIs());
+    
+    console.log(formData);
+    let returnData = "Thanks! Request received!"; 
+    res.send(returnData); //send back data
 }
 
 /*Post*/
@@ -197,4 +211,9 @@ function getFormData(req, res){
 //     console.log(travelData + "server debug");
 //   }
 
-  app.post('/add', getFormData);
+
+//Moved listening as last funciton for better logging?
+function listening(){
+  console.log("Server running");
+  console.log(`Running on localhost: ${port}`);
+}
