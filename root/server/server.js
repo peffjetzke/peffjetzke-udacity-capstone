@@ -91,7 +91,7 @@ function callAPIs() {
   travelData["fdays"] = formData.forecastDays;
   travelData["duration"] = formData.duration;
 
-  getCoordinates(fullGeoURL)
+  return getCoordinates(fullGeoURL)
   .then((coordData)=>{
     const lon = coordData.geonames[0].lng;
     const lat = coordData.geonames[0].lat;
@@ -105,40 +105,46 @@ function callAPIs() {
     //console.log("Weater: ", weatherData);
     let days = formData.forecastDays;
     if(days<=1){
-      let forecastData = {
-        temp: weatherData.data[0].temp,
-        high: weatherData.data[0].high_temp,
-        low: weatherData.data[0].low_temp,
-        desc: weatherData.data[0].weather.description,
-        icon: weatherData.data[0].weather.icon
-      }
+      // let forecastData = {
+      //   temp: weatherData.data[0].temp,
+      //   high: weatherData.data[0].high_temp,
+      //   low: weatherData.data[0].low_temp,
+      //   desc: weatherData.data[0].weather.description,
+      //   icon: weatherData.data[0].weather.icon
+      // }
       travelData["temp"] = weatherData.data[0].temp
       travelData["high"] = weatherData.data[0].high_temp
       travelData["low"] = weatherData.data[0].low_temp
       travelData["desc"] = weatherData.data[0].weather.description,
       travelData["icon"] = weatherData.data[0].weather.icon
-      //travelData.push(forecastData);
-      //console.log("Updated Travel Data: ", travelData);
       return travelData;
 
     }else if (days>=16) {
-      let forecastData = {
-        high: weatherData.data[15].high_temp,
-        low: weatherData.data[15].low_temp,
-        desc: weatherData.data[15].weather.description,
-        icon: weatherData.data[0].weather.icon
-      }
-      travelData.push(forecastData);
+      // let forecastData = {
+      //   high: weatherData.data[15].high_temp,
+      //   low: weatherData.data[15].low_temp,
+      //   desc: weatherData.data[15].weather.description,
+      //   icon: weatherData.data[0].weather.icon
+      // }
+      travelData["temp"] = weatherData.data[0].temp
+      travelData["high"] = weatherData.data[0].high_temp
+      travelData["low"] = weatherData.data[0].low_temp
+      travelData["desc"] = weatherData.data[0].weather.description,
+      travelData["icon"] = weatherData.data[0].weather.icon
       return travelData;
 
   }else{
-    let forecastData = {
-        high: weatherData.data[days].high_temp,
-        low: weatherData.data[days].low_temp,
-        desc: weatherData.data[days].weather.description,
-        icon: weatherData.data[days].weather.icon,
-    }
-      travelData.push(forecastData);
+    // let forecastData = {
+    //     high: weatherData.data[days].high_temp,
+    //     low: weatherData.data[days].low_temp,
+    //     desc: weatherData.data[days].weather.description,
+    //     icon: weatherData.data[days].weather.icon,
+    // }
+      travelData["temp"] = weatherData.data[0].temp
+      travelData["high"] = weatherData.data[0].high_temp
+      travelData["low"] = weatherData.data[0].low_temp
+      travelData["desc"] = weatherData.data[0].weather.description,
+      travelData["icon"] = weatherData.data[0].weather.icon
       return travelData;
     }
   })
@@ -164,7 +170,7 @@ function callAPIs() {
       return travelData;
     }
   }).then((travelData)=>{
-    console.log("Then Final Data: ", travelData); 
+    //console.log("Then Final Data: ", travelData); 
     return travelData; //This is not returned to the GET some reason?
   })
 }
@@ -172,10 +178,10 @@ function callAPIs() {
 /*Get*/
 app.get('/all', getData) 
 
-function getData(req, res) {
+async function getData(req, res) {
     console.log("Request for data received...");
     let returnData = {};
-    returnData = callAPIs(); 
+    returnData = await callAPIs(); 
     console.log("Trying to send: ", returnData);
     res.send(returnData);
   }
@@ -187,8 +193,8 @@ function getFormData(req, res){
 
     formData["city"] = reqData.city;
     formData["country"] = reqData.country;
-    formData["forecastDays"] = reqData.forecastDays;
     formData["duration"] = reqData.duration;
+    formData["forecastDays"] = reqData.forecastDays;
 
     console.log(formData);
     let returnMessage = "Thanks! Request received!"; 
