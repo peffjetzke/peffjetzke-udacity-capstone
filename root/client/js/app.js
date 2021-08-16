@@ -1,6 +1,5 @@
 /*Imports*/
 import { calcDays } from './calc'
-//import {...} from './update'
 import { fieldValidation } from './validation'
 
 let returnData = {};
@@ -46,7 +45,6 @@ function generatePage(e){
         console.log("Updated Form Data: ", formData);
 
         /*POST to server side with data from the form*/
-        //returnData = postData('http://localhost:8081/add', formData)
         postData('http://localhost:8081/add', formData)
         .then(async ()=>{
             const returnData = await getData();
@@ -106,8 +104,8 @@ const getData = async () =>{
     document.getElementById("country").innerHTML = "Country: " + country;
 
     //Update background
-    document.body.style.backgroundImage = imgURL; //"url("+imgURL+")";
-
+    document.body.style.backgroundImage = imgURL;
+    //document.body.style.backgroundImage = "url("+imgURL+")";
     //Forecast Data
     if(fDays<=1){
         let temp = uiData.temp;
@@ -160,16 +158,5 @@ const getData = async () =>{
     console.log("UI Update Complete!");
   }
 }
-/*Update the UI with the returned Weather and feeling data*/
-// const updateUI = async () => {
-//     const request = await fetch('http://localhost:8080/all');
-//     try{
-//         const pageData = await request.json();
-//         console.log(pageData + "last debug"); //debug
-//         //do document updates here
-//     } catch(error){
-//         console.log("There was a problem", error);
-//     }
-// }
 
 export { generatePage, resetPage, calcDays }

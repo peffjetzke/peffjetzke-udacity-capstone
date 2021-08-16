@@ -95,23 +95,13 @@ function callAPIs() {
   .then((coordData)=>{
     const lon = coordData.geonames[0].lng;
     const lat = coordData.geonames[0].lat;
-    //console.log("Coords are : ", lat + " " + lon);
     let fullWeatherURL = weatherURL+units+"&lat="+lat+"&lon="+lon+"&key="+weatherKey;
-    //console.log("Weater URL is: ", fullWeatherURL)
     const weatherData = getWeather(fullWeatherURL);
     return weatherData;
   })
   .then((weatherData)=>{
-    //console.log("Weater: ", weatherData);
     let days = formData.forecastDays;
     if(days<=1){
-      // let forecastData = {
-      //   temp: weatherData.data[0].temp,
-      //   high: weatherData.data[0].high_temp,
-      //   low: weatherData.data[0].low_temp,
-      //   desc: weatherData.data[0].weather.description,
-      //   icon: weatherData.data[0].weather.icon
-      // }
       travelData["temp"] = weatherData.data[0].temp
       travelData["high"] = weatherData.data[0].high_temp
       travelData["low"] = weatherData.data[0].low_temp
@@ -120,12 +110,6 @@ function callAPIs() {
       return travelData;
 
     }else if (days>=16) {
-      // let forecastData = {
-      //   high: weatherData.data[15].high_temp,
-      //   low: weatherData.data[15].low_temp,
-      //   desc: weatherData.data[15].weather.description,
-      //   icon: weatherData.data[0].weather.icon
-      // }
       travelData["temp"] = weatherData.data[0].temp
       travelData["high"] = weatherData.data[0].high_temp
       travelData["low"] = weatherData.data[0].low_temp
@@ -134,12 +118,6 @@ function callAPIs() {
       return travelData;
 
   }else{
-    // let forecastData = {
-    //     high: weatherData.data[days].high_temp,
-    //     low: weatherData.data[days].low_temp,
-    //     desc: weatherData.data[days].weather.description,
-    //     icon: weatherData.data[days].weather.icon,
-    // }
       travelData["temp"] = weatherData.data[0].temp
       travelData["high"] = weatherData.data[0].high_temp
       travelData["low"] = weatherData.data[0].low_temp
@@ -150,28 +128,36 @@ function callAPIs() {
   })
   .then((travelData)=>{
     let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q="+travelData.city;
-    //console.log("Pix URL: ", pixFullURL);
+    console.log(pixFullURL);
     const imageSrc = getImage(pixFullURL);
-    return imageSrc;
+    // if(imageSrc.hits.length == 0){
+    //   let pixFullURL = pixabayURL+pixKey+pixabayImage+"&q=travel";
+    //   const imageSrc = getImage(pixFullURL);
+    //   return imageSrc
+    // }
+    // else{
+    //   return imageSrc;
+    // }
+    return imageSrc
   })
   .then((imageSrc)=>{
     if(imageSrc.hits.length == 0){
-      let imgsrc = "url('./media/default.jpg')"; 
+      let imgsrc = "url('./media/default.jpg')";
+      // let i = Math.floor(Math.random()*imageSrc.hits.length);
+      // let imgURL = imageSrc.hits[i].largeImageURL;     
+      // let imgsrc = "url("+imgURL+")";
       travelData["imgsrc"] = imgsrc;
-      //console.log("Final Travel Update: ", travelData);
       return travelData;
     }else{
       let i = Math.floor(Math.random()*imageSrc.hits.length);
       let imgURL = imageSrc.hits[i].largeImageURL;     
-      // console.log(imgURL);
       let imgsrc = "url("+imgURL+")";
       travelData["imgsrc"] = imgsrc;
-      //console.log("Final Travel Update: ", travelData);
       return travelData;
     }
   }).then((travelData)=>{
     //console.log("Then Final Data: ", travelData); 
-    return travelData; //This is not returned to the GET some reason?
+    return travelData; 
   })
 }
 
@@ -200,31 +186,6 @@ function getFormData(req, res){
     let returnMessage = "Thanks! Request received!"; 
     res.send(returnMessage); //send back data
 }
-
-/*Post*/
-// function postData(req, res) {
-//     let reqData = req.body;
-
-//     console.log("Check request data: ", reqData);
-
-//     travelData["duration"] = reqData.duration;
-//     travelData["lat"] = reqData.lat;
-//     travelData["lon"] = reqData.lon;
-//     travelData["city"] = reqData.city;
-//     travelData["country"] = reqData.country;
-//     travelData["current"] = reqData.current;
-//     travelData["high"] = reqData.high;
-//     travelData["low"] = reqData.low;
-//     travelData["desc"] = reqData.desc
-//     travelData["imgsrc"] = reqData.imgsrc;
-//     travelData["forecastDays"] = reqData.forecastDays;
-//     travelData["icon"] = reqData.icon;
-//     travelData["bgImg"] = reqData.bgImg;
-
-//     res.send(travelData);
-//     console.log(travelData + "server debug");
-//   }
-
 
 //Moved listening as last funciton for better logging?
 function listening(){
