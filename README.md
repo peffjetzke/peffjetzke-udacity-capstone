@@ -18,5 +18,7 @@ Running this project can be accomplished via the following commands in the termi
 ### Attributions
 
 [Working Webpack versioning](https://knowledge.udacity.com/questions/646945)
+
 [Sending server data back to client](https://knowledge.udacity.com/questions/665606)
+
 [Fixing JEST server error](https://knowledge.udacity.com/questions/321562)
