@@ -14,7 +14,7 @@ const app = express();
 /*Middleware*/
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { response } = require('express');
+//const { response } = require('express');
 
 /*bodyParser returns the depreciated warning. Including it instead of express to stay inline with rubric*/
 app.use(bodyParser.urlencoded({extended: false}));
@@ -23,11 +23,12 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //point at the correct client folder
+//app.use(express.static("dist"));?
 app.use(express.static('root'));
 
 /*Start Server w/ callback*/
-const port = 8081;
-const server = app.listen(port, listening);
+const port = 8000; //changed port to 8000 for review
+const server = app.listen(port, listening); 
 
 
 /*API Variables*/
@@ -162,7 +163,12 @@ function callAPIs() {
 }
 
 /*Get*/
-app.get('/all', getData) 
+app.get('/all', getData)
+
+// app.get('/', function (req, res) {
+//   // res.sendFile('dist/index.html')
+//   res.sendFile(path.resolve('src/client/views/index.html'))
+// })
 
 async function getData(req, res) {
     console.log("Request for data received...");
