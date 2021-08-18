@@ -10,6 +10,8 @@ Running this project can be accomplished via the following commands in the termi
 `npm start`
 `npm run build-prod`
 
+Localhost port for this is set to 8081.
+
 #### Extended Functionality: 
 - Trip end date and length of stay
 - Default image when no location image available
@@ -22,3 +24,5 @@ Running this project can be accomplished via the following commands in the termi
 [Sending server data back to client](https://knowledge.udacity.com/questions/665606)
 
 [Fixing JEST server error](https://knowledge.udacity.com/questions/321562)
+
+[Fixing CANNOT GET error](https://knowledge.udacity.com/questions/668994)

@@ -24,10 +24,10 @@ app.use(cors());
 
 //point at the correct client folder
 //app.use(express.static("dist"));?
-app.use(express.static('root'));
+app.use(express.static('./dist'));
 
 /*Start Server w/ callback*/
-const port = 8000; //changed port to 8000 for review
+const port = 8081; //changed port to 8000 for review
 const server = app.listen(port, listening); 
 
 
@@ -143,7 +143,8 @@ function callAPIs() {
   })
   .then((imageSrc)=>{
     if(imageSrc.hits.length == 0){
-      let imgsrc = "url('./media/default.jpg')";
+      //let imgsrc = "url('./media/default.jpg')";
+      let imgsrc = "url('https://cdn.pixabay.com/photo/2015/07/11/23/02/plane-841441_960_720.jpg')";
       // let i = Math.floor(Math.random()*imageSrc.hits.length);
       // let imgURL = imageSrc.hits[i].largeImageURL;     
       // let imgsrc = "url("+imgURL+")";
