@@ -27,8 +27,7 @@ module.exports = {
         new HtmlWebPackPlugin({
             template: "./root/client/views/index.html",
             filename: "./index.html",
-        },
+        }),
         new WorkboxPlugin.GenerateSW()
-        )
     ]
 }
